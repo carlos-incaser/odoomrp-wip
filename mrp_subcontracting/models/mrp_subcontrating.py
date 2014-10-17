@@ -27,8 +27,10 @@ class MrpRoutingWorkcenter(models.Model):
 
     external = fields.Boolean('External', help="Is Subcontract Operation")
     semifinished_id = fields.Many2one(
-            'product.product', 'Semifinished Subcontracting',
-            domain=[('type','=','product')])
+        'product.product', 'Semifinished Subcontracting',
+        domain=[('type','=','product'),
+                ('route_ids','in', ['ref(purchase.route_warehouse0_buy)',
+                                    'ref(stock.route_warehouse0_mto)'])])
     picking_type_id = fields.Many2one('stock.picking.type', 'Picking Type',
                                       domain[('code','=','outgoing')])
     virtual_subcontracting_location_id = fields.Many2one('stock.location',
@@ -46,3 +48,15 @@ class MrpProductionWorkcenterLine(models.Model):
     in_picking_id = fields.Many2one('stock.picking', 'In Picking')
 
 
+
+
+class MrpProduction(models.Model):
+    _inherit = 'mrp.production'
+
+    @api.multi
+    def action_confirm(self):
+        res = super(MrpProduction, self).action_confirm()
+        for workcenter_line in self.workcenter_lines:
+            pass
+            #if workcenter_line
+        return res
